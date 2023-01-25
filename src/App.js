@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "../src/App.css";
 
-function App() {
+export default function App() {
+  const [postArr, setPostArr] = useState([]);
+  const [users, setUsers] = useState([]);
+  const getPost = async () => {
+    const postData = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const usersData = await fetch("https://jsonplaceholder.typicode.com/users");
+    const result = await postData.json();
+    const resultUsers = await usersData.json();
+    setPostArr(result);
+    setUsers(resultUsers);
+  };
+  useEffect(() => {
+    getPost();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Post Detail</h1>
+      <div>
+        {postArr.map((eachPost) => {
+          const userData = users.find((user) => user.id === eachPost.userId);
+          return (
+            userData && (
+              <div key={eachPost.id} className="details">
+                <div>UserId : {eachPost.userId}</div>
+                <div>Title : {eachPost.title}</div>
+                <div>Name : {userData.name}</div>
+                <div>Email : {userData.email}</div>
+              </div>
+            )
+          );
+        })}
+      </div>
     </div>
   );
 }
-
-export default App;
